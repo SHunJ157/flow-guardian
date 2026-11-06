@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>流量管家</title>
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0a84ff">
+
+  <!-- iPhone 專用設定 -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="流量管家">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+
+  <style>
+    :root {
+      --bg: #f2f2f7;
+      --card: #ffffff;
+      --text: #1c1c1e;
+      --sub: #8e8e93;
+      --blue: #0a84ff;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #000000;
+        --card: #1c1c1e;
+        --text: #ffffff;
+        --sub: #8e8e93;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom);
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", sans-serif;
+    }
+    h1 { font-size: 32px; margin: 24px 0 16px; }
+    .card {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .big { font-size: 40px; font-weight: 700; color: var(--blue); }
+    .sub { color: var(--sub); font-size: 15px; margin-top: 6px; }
+    .ok { color: #30d158; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <h1>流量管家</h1>
+
+  <div class="card">
+    <div class="big">12000 MB</div>
+    <div class="sub">PWA 空殼測試頁（第二階段）</div>
+  </div>
+
+  <div class="card">
+    <div>Service Worker 狀態：<span id="sw-status">檢查中…</span></div>
+    <div class="sub">顯示「已啟用」代表離線功能正常</div>
+  </div>
+
+  <script>
+    const el = document.getElementById('sw-status');
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(() => navigator.serviceWorker.ready)
+        .then(() => { el.textContent = '已啟用'; el.className = 'ok'; })
+        .catch(err => { el.textContent = '失敗：' + err.message; });
+    } else {
+      el.textContent = '此瀏覽器不支援';
+    }
+  </script>
+</body>
+</html>
