@@ -1,0 +1,161 @@
+:root {
+  --bg: #f2f2f7;
+  --card: #ffffff;
+  --text: #1c1c1e;
+  --sub: #8e8e93;
+  --track: #e5e5ea;
+  --blue: #0a84ff;
+  --red: #ff453a;
+  --orange: #ff9f0a;
+  --line: #e5e5ea;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #000000;
+    --card: #1c1c1e;
+    --text: #ffffff;
+    --track: #3a3a3c;
+    --line: #2c2c2e;
+  }
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Helvetica Neue", sans-serif;
+}
+
+#app {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: calc(env(safe-area-inset-top) + 8px) 16px calc(env(safe-area-inset-bottom) + 96px);
+}
+
+.page { display: none; }
+.page.active { display: block; }
+
+.top { padding: 8px 4px 16px; }
+.top h1 { margin: 2px 0 0; font-size: 34px; font-weight: 700; }
+.date { margin: 0; color: var(--sub); font-size: 14px; }
+
+.card {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 18px 20px;
+  margin-bottom: 14px;
+}
+
+.label { margin: 0 0 6px; font-size: 14px; font-weight: 600; color: var(--sub); }
+.muted { color: var(--sub); }
+.small { font-size: 13px; }
+.unit { font-size: 18px; font-weight: 600; margin-left: 4px; color: var(--sub); }
+
+.hero-num {
+  margin: 0 0 14px;
+  font-size: 46px;
+  font-weight: 700;
+  color: var(--blue);
+  letter-spacing: -1px;
+}
+.hero-num.over { color: var(--red); }
+
+.bar {
+  height: 12px;
+  background: var(--track);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  width: 0;
+  background: var(--blue);
+  border-radius: 6px;
+  transition: width 0.5s ease;
+}
+.bar-fill.warn { background: var(--orange); }
+.bar-fill.over { background: var(--red); }
+
+.row-between { display: flex; justify-content: space-between; align-items: center; }
+.row-between.small { margin-top: 8px; color: var(--sub); }
+#cycle-text { margin: 8px 0 0; }
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.stat-num { margin: 0; font-size: 26px; font-weight: 700; }
+.stat-num.over { color: var(--red); }
+.stat-label { margin: 2px 0 0; font-size: 13px; color: var(--sub); }
+
+.days { margin: 0; font-size: 40px; font-weight: 700; color: var(--blue); }
+
+.app-list { list-style: none; margin: 4px 0 0; padding: 0; }
+.app-list li {
+  display: flex;
+  align-items: center;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+}
+.app-list li:last-child { border-bottom: none; }
+.app-ico {
+  width: 34px; height: 34px;
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  margin-right: 12px;
+  background: var(--track);
+}
+.app-name { flex: 1; font-size: 16px; }
+.app-mb { font-weight: 600; font-variant-numeric: tabular-nums; }
+.app-mb small { color: var(--sub); font-weight: 400; margin-left: 2px; }
+
+.note { margin: 12px 0 0; font-size: 12px; line-height: 1.5; color: var(--sub); }
+
+/* 警告橫幅 */
+.banner {
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 600;
+  color: #fff;
+}
+.banner.red { background: var(--red); }
+.banner.orange { background: var(--orange); }
+
+/* 底部分頁列 */
+.tabbar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  display: flex;
+  justify-content: space-around;
+  padding: 8px 0 calc(env(safe-area-inset-bottom) + 6px);
+  background: color-mix(in srgb, var(--card) 88%, transparent);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid var(--line);
+}
+.tab {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--sub);
+  font-size: 11px;
+  font-family: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 0;
+}
+.tab .ico { font-size: 22px; filter: grayscale(1); opacity: 0.7; }
+.tab.active { color: var(--blue); font-weight: 600; }
+.tab.active .ico { filter: none; opacity: 1; }

@@ -8,71 +8,94 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0a84ff">
 
-  <!-- iPhone 專用設定 -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="流量管家">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 
-  <style>
-    :root {
-      --bg: #f2f2f7;
-      --card: #ffffff;
-      --text: #1c1c1e;
-      --sub: #8e8e93;
-      --blue: #0a84ff;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #000000;
-        --card: #1c1c1e;
-        --text: #ffffff;
-        --sub: #8e8e93;
-      }
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom);
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", sans-serif;
-    }
-    h1 { font-size: 32px; margin: 24px 0 16px; }
-    .card {
-      background: var(--card);
-      border-radius: 20px;
-      padding: 20px;
-      margin-bottom: 16px;
-    }
-    .big { font-size: 40px; font-weight: 700; color: var(--blue); }
-    .sub { color: var(--sub); font-size: 15px; margin-top: 6px; }
-    .ok { color: #30d158; font-weight: 600; }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>流量管家</h1>
+  <main id="app">
 
-  <div class="card">
-    <div class="big">12000 MB</div>
-    <div class="sub">PWA 空殼測試頁（第二階段）</div>
-  </div>
+    <!-- ========== 首頁 ========== -->
+    <section id="page-home" class="page active">
+      <header class="top">
+        <p class="date" id="today-text"></p>
+        <h1>流量管家</h1>
+      </header>
 
-  <div class="card">
-    <div>Service Worker 狀態：<span id="sw-status">檢查中…</span></div>
-    <div class="sub">顯示「已啟用」代表離線功能正常</div>
-  </div>
+      <div id="warning-list"></div>
 
-  <script>
-    const el = document.getElementById('sw-status');
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js')
-        .then(() => navigator.serviceWorker.ready)
-        .then(() => { el.textContent = '已啟用'; el.className = 'ok'; })
-        .catch(err => { el.textContent = '失敗：' + err.message; });
-    } else {
-      el.textContent = '此瀏覽器不支援';
-    }
-  </script>
+      <!-- 本月剩餘 -->
+      <div class="card">
+        <p class="label">本月剩餘流量</p>
+        <p class="hero-num"><span id="remaining-mb">0</span><span class="unit">MB</span></p>
+        <div class="bar"><div class="bar-fill" id="month-bar"></div></div>
+        <div class="row-between small">
+          <span id="month-used-text"></span>
+          <span id="month-total-text"></span>
+        </div>
+        <p class="small muted" id="cycle-text"></p>
+      </div>
+
+      <!-- 今日額度 -->
+      <div class="card">
+        <p class="label">今日動態額度</p>
+        <p class="hero-num"><span id="quota-mb">0</span><span class="unit">MB</span></p>
+        <div class="bar"><div class="bar-fill" id="today-bar"></div></div>
+        <div class="stats">
+          <div>
+            <p class="stat-num" id="used-today">0</p>
+            <p class="stat-label">今日已用 MB</p>
+          </div>
+          <div>
+            <p class="stat-num" id="left-today">0</p>
+            <p class="stat-label">今日剩餘 MB</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 重置倒數 -->
+      <div class="card row-between">
+        <div>
+          <p class="label">距離下次重置</p>
+          <p class="muted small" id="reset-date-text"></p>
+        </div>
+        <p class="days"><span id="days-left">0</span><span class="unit">天</span></p>
+      </div>
+
+      <!-- 各 App -->
+      <div class="card">
+        <p class="label">各 App 今日流量</p>
+        <ul class="app-list" id="app-list"></ul>
+        <p class="note">
+          資料來源：手動輸入。iOS 不允許網頁讀取其他 App 的行動數據用量，
+          請到 iPhone「設定 → 行動服務」查看後自行輸入。
+        </p>
+      </div>
+    </section>
+
+    <!-- ========== 紀錄（預留） ========== -->
+    <section id="page-history" class="page">
+      <header class="top"><h1>紀錄</h1></header>
+      <div class="card"><p class="muted">每日流量紀錄將在第五階段完成。</p></div>
+    </section>
+
+    <!-- ========== 設定（預留） ========== -->
+    <section id="page-settings" class="page">
+      <header class="top"><h1>設定</h1></header>
+      <div class="card"><p class="muted">每月流量與重置日期設定將在後續階段完成。</p></div>
+    </section>
+
+  </main>
+
+  <nav class="tabbar">
+    <button class="tab active" data-page="page-home"><span class="ico">📊</span>首頁</button>
+    <button class="tab" data-page="page-history"><span class="ico">🗓️</span>紀錄</button>
+    <button class="tab" data-page="page-settings"><span class="ico">⚙️</span>設定</button>
+  </nav>
+
+  <script src="app.js"></script>
 </body>
 </html>

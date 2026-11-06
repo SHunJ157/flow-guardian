@@ -1,7 +1,9 @@
-const CACHE_NAME = 'flow-guardian-v1';
+const CACHE_NAME = 'flow-guardian-v2';
 const FILES = [
   './',
   './index.html',
+  './style.css',
+  './app.js',
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png',
@@ -24,8 +26,16 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
+// 網路優先：有網路就抓最新版並更新快取；沒網路才用快取
 self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
   event.respondWith(
-    caches.match(event.request).then(cached => cached || fetch(event.request))
+    fetch(event.request)
+      .then(res => {
+        const copy = res.clone();
+        caches.open(CACHE_NAME).then(c => c.put(event.request, copy));
+        return res;
+      })
+      .catch(() => caches.match(event.request))
   );
 });
