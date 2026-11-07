@@ -1,5 +1,5 @@
 // ============================================================
-// 第五階段：每日紀錄與資料保存
+// 第六階段：每日紀錄、資料保存、分級警告
 // ============================================================
 
 const APPS = [
@@ -48,9 +48,11 @@ function persist() {
   return true;
 }
 
+const WARN_RATIO = 0.8;   // 今日用到額度的 80% 就先提醒
+
 function barClass(ratio) {
   if (ratio > 1) return 'over';
-  if (ratio > 0.85) return 'warn';
+  if (ratio >= WARN_RATIO) return 'warn';
   return '';
 }
 const fd = t => { const d = new Date(t); return `${d.getUTCMonth() + 1}/${d.getUTCDate()}`; };
@@ -62,6 +64,7 @@ function renderHome(c) {
   const monthUsedRatio = usedMonth / monthly;
   const planRatio = (c.cyc.elapsedDays + 1) / c.cyc.cycleDays;
   const todayRatio = c.q.quota > 0 ? c.usedToday / c.q.quota : (c.usedToday > 0 ? 2 : 0);
+  const dl = c.cyc.daysLeft;
 
   $('today-text').textContent =
     `${c.now.getMonth() + 1} 月 ${c.now.getDate()} 日 星期${WK[c.now.getDay()]}`;
@@ -83,20 +86,57 @@ function renderHome(c) {
   $('used-today').classList.toggle('over', todayRatio > 1);
   $('left-today').classList.toggle('over', c.q.leftToday < 0);
 
-  $('days-left').textContent = c.cyc.daysLeft;
+  // 明天預估額度：假設今天用到這裡為止
+  let tomorrow = null;
+  if (dl > 1) {
+    tomorrow = Math.max(0, c.remaining) / (dl - 1);
+    const diff = tomorrow - c.q.quota;
+    $('tomorrow-text').textContent =
+      `若今天用到這裡為止，明天額度約 ${fmt(tomorrow)} MB（比今天${diff >= 0 ? '多' : '少'} ${fmt(Math.abs(diff))} MB）`;
+  } else {
+    $('tomorrow-text').textContent = '今天是本期最後一天，明天流量重置。';
+  }
+
+  $('days-left').textContent = dl;
   $('reset-date-text').textContent = `${fd(c.cyc.next)} 重置`;
 
+  // ---- 警告（由嚴重到輕微）----
   const warnings = [];
-  if (todayRatio > 1) {
-    warnings.push({ cls: 'red', text: `⚠️ 今日已超過動態額度 ${fmt(c.usedToday - c.q.quota)} MB，明天起每日額度會自動降低。` });
-  }
-  if (monthUsedRatio > planRatio) {
-    warnings.push({ cls: 'orange', text: `📉 整體用量進度（${Math.round(monthUsedRatio * 100)}%）超過週期進度（${Math.round(planRatio * 100)}%），請留意用量。` });
-  }
+  const add = (cls, title, detail) => warnings.push({ cls, title, detail });
+
   if (c.remaining <= 0) {
-    warnings.push({ cls: 'red', text: '🚫 本期流量已用完。' });
+    add('red', '🚫 本期流量已用完', '請留意電信業者的降速或加購規則。');
   }
-  $('warning-list').innerHTML = warnings.map(w => `<div class="banner ${w.cls}">${w.text}</div>`).join('');
+
+  if (todayRatio > 1) {
+    add('red', `⚠️ 今日超額 ${fmt(c.usedToday - c.q.quota)} MB`,
+      `已用 ${fmt(c.usedToday)} MB，今日額度 ${fmt(c.q.quota)} MB。` +
+      (tomorrow !== null ? `明天額度會降到約 ${fmt(tomorrow)} MB。` : ''));
+  } else if (todayRatio >= WARN_RATIO) {
+    add('orange', `🟠 今日額度已用 ${Math.round(todayRatio * 100)}%`,
+      `只剩 ${fmt(c.q.leftToday)} MB，請放慢使用速度。`);
+  }
+
+  // 整體進度：用「目前平均速度」預測會不會提早用完
+  const avg = usedMonth / (c.cyc.elapsedDays + 1);
+  let projected = false;
+  if (c.remaining > 0 && avg > 0 && c.cyc.elapsedDays >= 2) {
+    const daysToEmpty = Math.floor(c.remaining / avg);
+    if (daysToEmpty < dl) {
+      projected = true;
+      const emptyDay = fd(c.cyc.today + daysToEmpty * 86400000);
+      add('red', '📉 照目前速度，流量會提早用完',
+        `平均每天 ${fmt(avg)} MB，預計約 ${emptyDay} 用完，距離重置日 ${fd(c.cyc.next)} 還差 ${dl - daysToEmpty} 天。` +
+        `建議每天控制在 ${fmt(Math.max(0, c.remaining) / dl)} MB 以內。`);
+    }
+  }
+  if (!projected && c.remaining > 0 && monthUsedRatio > planRatio) {
+    add('orange', '📈 整體用量進度超前',
+      `已用 ${Math.round(monthUsedRatio * 100)}%，週期進度 ${Math.round(planRatio * 100)}%。目前還撐得到重置日，但餘裕在縮小。`);
+  }
+
+  $('warning-list').innerHTML = warnings.map(w =>
+    `<div class="banner ${w.cls}"><b>${w.title}</b><span>${w.detail}</span></div>`).join('');
 }
 
 // App 輸入列：只建立一次，之後只更新數值，避免輸入到一半被重畫
