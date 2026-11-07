@@ -192,3 +192,49 @@ body {
 }
 .btn:active { opacity: 0.8; }
 .center { text-align: center; min-height: 20px; }
+/* ===== 第五階段 ===== */
+.app-input {
+  width: 92px;
+  text-align: right;
+  padding: 8px 10px;
+  font-size: 17px;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.app-input:focus { outline: 2px solid var(--blue); }
+.app-input.bad { border-color: var(--red); outline: 2px solid var(--red); }
+.mb { color: var(--sub); margin-left: 4px; width: 24px; font-size: 12px; }
+
+.stats.nobr { margin-top: 4px; border-top: none; padding-top: 0; }
+
+.hist-list { list-style: none; margin: 4px 0 0; padding: 0; }
+.hist-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+}
+.hist-row:last-child { border-bottom: none; }
+.hist-date { font-size: 16px; font-weight: 600; }
+.hist-sub { font-size: 12px; color: var(--sub); margin-top: 2px; font-weight: 400; }
+.hist-num { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+.hist-num.over { color: var(--red); }
+
+textarea {
+  display: block;
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+.btn-row { display: flex; gap: 10px; margin-top: 10px; }
+.btn-row .btn { flex: 1; }
+.btn.secondary { background: var(--track); color: var(--blue); }

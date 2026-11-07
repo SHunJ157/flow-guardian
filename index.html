@@ -65,24 +65,50 @@
         <p class="days"><span id="days-left">0</span><span class="unit">天</span></p>
       </div>
 
-      <!-- 各 App -->
+      <!-- 各 App 今日輸入 -->
       <div class="card">
-        <p class="label">各 App 今日流量</p>
+        <p class="label">記錄今日各 App 流量（MB）</p>
         <ul class="app-list" id="app-list"></ul>
         <p class="note">
           資料來源：手動輸入。iOS 不允許網頁讀取其他 App 的行動數據用量，
-          請到 iPhone「設定 → 行動服務」查看後自行輸入。
+          請到 iPhone「設定 → 行動服務」查看。<br>
+          小技巧：欄位可輸入算式，例如「今天累計 1250 − 昨天累計 1100」輸入 <b>1250-1100</b>，會自動算出 150。
         </p>
       </div>
     </section>
 
-    <!-- ========== 紀錄（預留） ========== -->
+    <!-- ========== 紀錄 ========== -->
     <section id="page-history" class="page">
       <header class="top"><h1>紀錄</h1></header>
-      <div class="card"><p class="muted">每日流量紀錄將在第五階段完成。</p></div>
+
+      <div class="card">
+        <p class="label">本期摘要</p>
+        <div class="stats nobr">
+          <div>
+            <p class="stat-num" id="h-used">0</p>
+            <p class="stat-label">本期已用 MB</p>
+          </div>
+          <div>
+            <p class="stat-num" id="h-avg">0</p>
+            <p class="stat-label">平均每天 MB</p>
+          </div>
+        </div>
+        <p class="note" id="h-opening"></p>
+      </div>
+
+      <div class="card">
+        <p class="label">本期各 App 合計</p>
+        <ul class="app-list" id="h-apps"></ul>
+      </div>
+
+      <div class="card">
+        <p class="label">每日紀錄</p>
+        <ul class="hist-list" id="h-days"></ul>
+        <p class="note">只顯示有記錄流量的日子。紅色代表當天超過當時的動態額度。</p>
+      </div>
     </section>
 
-       <!-- ========== 設定 ========== -->
+    <!-- ========== 設定 ========== -->
     <section id="page-settings" class="page">
       <header class="top"><h1>設定</h1></header>
 
@@ -97,14 +123,14 @@
       </div>
 
       <div class="card">
-        <p class="label">目前用量（手動輸入）</p>
-        <label class="field">目前剩餘流量（MB）
+        <p class="label">校正剩餘流量</p>
+        <label class="field">目前剩餘流量（MB，以電信業者顯示為準）
           <input id="in-remaining" type="number" inputmode="decimal" min="0">
         </label>
-        <label class="field">今日已用流量（MB，已包含在上面的剩餘中）
-          <input id="in-used" type="number" inputmode="decimal" min="0">
-        </label>
-        <p class="note">資料來源：手動輸入。請參考電信業者 App，或 iPhone「設定 → 行動服務」。</p>
+        <p class="note">
+          App 只能計算你記錄的流量，系統與其他來源的用量需要靠這裡校正。
+          建議每隔幾天對照電信 App 校正一次；校正不會更動每日紀錄。
+        </p>
       </div>
 
       <div class="card">
@@ -114,6 +140,17 @@
 
       <button id="save-btn" class="btn">儲存</button>
       <p id="save-msg" class="small center"></p>
+
+      <div class="card">
+        <p class="label">備份與還原</p>
+        <p class="note" style="margin-top:0">資料只存在這支手機上。換手機或清除網站資料前，請先備份。</p>
+        <textarea id="backup-text" rows="4" placeholder="備份文字會顯示在這裡；還原時把備份文字貼到這裡"></textarea>
+        <div class="btn-row">
+          <button id="export-btn" class="btn secondary">產生備份</button>
+          <button id="import-btn" class="btn secondary">還原備份</button>
+        </div>
+        <p id="backup-msg" class="small center"></p>
+      </div>
     </section>
 
   </main>
@@ -125,6 +162,7 @@
   </nav>
 
   <script src="calc.js"></script>
+  <script src="storage.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
