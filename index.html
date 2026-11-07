@@ -82,10 +82,38 @@
       <div class="card"><p class="muted">每日流量紀錄將在第五階段完成。</p></div>
     </section>
 
-    <!-- ========== 設定（預留） ========== -->
+       <!-- ========== 設定 ========== -->
     <section id="page-settings" class="page">
       <header class="top"><h1>設定</h1></header>
-      <div class="card"><p class="muted">每月流量與重置日期設定將在後續階段完成。</p></div>
+
+      <div class="card">
+        <p class="label">流量方案</p>
+        <label class="field">每月流量（MB，1 GB = 1000 MB）
+          <input id="in-monthly" type="number" inputmode="decimal" min="1">
+        </label>
+        <label class="field">每月重置日（1～31）
+          <input id="in-reset" type="number" inputmode="numeric" min="1" max="31">
+        </label>
+      </div>
+
+      <div class="card">
+        <p class="label">目前用量（手動輸入）</p>
+        <label class="field">目前剩餘流量（MB）
+          <input id="in-remaining" type="number" inputmode="decimal" min="0">
+        </label>
+        <label class="field">今日已用流量（MB，已包含在上面的剩餘中）
+          <input id="in-used" type="number" inputmode="decimal" min="0">
+        </label>
+        <p class="note">資料來源：手動輸入。請參考電信業者 App，或 iPhone「設定 → 行動服務」。</p>
+      </div>
+
+      <div class="card">
+        <p class="label">計算預覽</p>
+        <p class="small" id="set-preview"></p>
+      </div>
+
+      <button id="save-btn" class="btn">儲存</button>
+      <p id="save-msg" class="small center"></p>
     </section>
 
   </main>
@@ -96,6 +124,7 @@
     <button class="tab" data-page="page-settings"><span class="ico">⚙️</span>設定</button>
   </nav>
 
+  <script src="calc.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

@@ -159,3 +159,36 @@ body {
 .tab .ico { font-size: 22px; filter: grayscale(1); opacity: 0.7; }
 .tab.active { color: var(--blue); font-weight: 600; }
 .tab.active .ico { filter: none; opacity: 1; }
+/* 設定頁表單 */
+.field {
+  display: block;
+  font-size: 14px;
+  color: var(--sub);
+  margin-bottom: 14px;
+}
+.field input {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 12px 14px;
+  font-size: 17px; /* 16px 以上，iPhone 才不會自動放大畫面 */
+  font-family: inherit;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+.field input:focus { outline: 2px solid var(--blue); }
+.btn {
+  width: 100%;
+  padding: 15px;
+  font-size: 17px;
+  font-weight: 600;
+  font-family: inherit;
+  color: #fff;
+  background: var(--blue);
+  border: none;
+  border-radius: 14px;
+}
+.btn:active { opacity: 0.8; }
+.center { text-align: center; min-height: 20px; }

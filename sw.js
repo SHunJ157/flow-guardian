@@ -1,8 +1,9 @@
-const CACHE_NAME = 'flow-guardian-v2';
+const CACHE_NAME = 'flow-guardian-v3';
 const FILES = [
   './',
   './index.html',
   './style.css',
+  './calc.js',
   './app.js',
   './manifest.json',
   './icons/icon-192.png',

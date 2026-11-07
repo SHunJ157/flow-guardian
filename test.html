@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>計算測試</title>
+  <style>
+    body { font-family: sans-serif; padding: 16px; line-height: 1.7; }
+    .ok { color: #1a9d3a; } .bad { color: #d00; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>流量計算自動測試</h2>
+  <div id="out"></div>
+  <script src="calc.js"></script>
+  <script>
+    const out = document.getElementById('out');
+    const iso = t => new Date(t).toISOString().slice(0, 10);
+    const near = (a, b) => Math.abs(a - b) < 0.01;
+    let fail = 0;
+    function check(name, pass, detail) {
+      if (!pass) fail++;
+      out.innerHTML += `<div class="${pass ? 'ok' : 'bad'}">${pass ? '✅' : '❌'} ${name}　${detail}</div>`;
+    }
+
+    let c = calcCycle(2026, 9, 28, 25);
+    check('10/28 剩餘天數為 28', c.daysLeft === 28, `實際 ${c.daysLeft}`);
+    check('10/28 週期為 10/25～11/25', iso(c.start) === '2026-10-25' && iso(c.next) === '2026-11-25', `${iso(c.start)} ~ ${iso(c.next)}`);
+    check('9500 ÷ 28 = 339.29', near(calcQuota(9500, 0, c.daysLeft).quota, 339.29), calcQuota(9500, 0, c.daysLeft).quota.toFixed(2));
+
+    c = calcCycle(2026, 9, 25, 25);
+    check('重置當天（10/25）剩餘 31 天', c.daysLeft === 31 && iso(c.start) === '2026-10-25', `實際 ${c.daysLeft}`);
+
+    c = calcCycle(2026, 9, 24, 25);
+    check('重置前一天（10/24）剩餘 1 天', c.daysLeft === 1 && iso(c.start) === '2026-09-25', `實際 ${c.daysLeft}`);
+
+    c = calcCycle(2026, 11, 31, 25);
+    check('跨年（12/31）下次重置為 1/25，剩 25 天', c.daysLeft === 25 && iso(c.next) === '2027-01-25', `${iso(c.next)}，${c.daysLeft} 天`);
+
+    c = calcCycle(2027, 1, 10, 31);
+    check('重置日 31、二月自動取月底', iso(c.next) === '2027-02-28' && c.daysLeft === 18, `${iso(c.next)}，${c.daysLeft} 天`);
+
+    const day1 = calcQuota(12000, 0, 31).quota;
+    const underNext = calcQuota(11700, 0, 30).quota;
+    const overNext = calcQuota(11500, 0, 30).quota;
+    check('昨天用量低於預算 → 今日額度變高', underNext > day1, `${day1.toFixed(2)} → ${underNext.toFixed(2)}`);
+    check('昨天用量超過預算 → 今日額度變低', overNext < day1, `${day1.toFixed(2)} → ${overNext.toFixed(2)}`);
+
+    const a = calcQuota(9500, 0, 28).quota, b = calcQuota(9400, 100, 28).quota;
+    check('今天用掉流量，今日額度不會縮水', near(a, b), `${a.toFixed(2)} vs ${b.toFixed(2)}`);
+
+    out.innerHTML += `<h3>${fail === 0 ? '🎉 全部通過' : '有 ' + fail + ' 項失敗'}</h3>`;
+  </script>
+</body>
+</html>
