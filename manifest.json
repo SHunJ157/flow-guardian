@@ -1,4 +1,5 @@
 {
+  "id": "./",
   "name": "流量管家",
   "short_name": "流量管家",
   "description": "個人行動數據流量管家",
@@ -9,6 +10,7 @@
   "background_color": "#f2f2f7",
   "theme_color": "#0a84ff",
   "lang": "zh-Hant",
+  "categories": ["utilities", "productivity"],
   "icons": [
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
